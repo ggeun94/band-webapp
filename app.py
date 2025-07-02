@@ -9,7 +9,11 @@ def load_data():
 
 df = load_data()
 
-st.title("🎸 밴드 합주 곡 세션별 확인")
+st.title("🎸 밴드 합주 곡 세션별 확인 (디버그 모드)")
+
+# 디버그: 엑셀 데이터 그대로 보기
+if st.checkbox("엑셀 원본 데이터 보기"):
+    st.write(df)
 
 members_input = st.text_input(
     "오늘 참석하는 멤버 이름을 쉼표로 입력하세요 (예: 요한,형준,경주):",
@@ -32,8 +36,8 @@ if st.button("곡 상태 보기"):
                 ("건반", row["건반"]),
                 ("보컬", row["보컬"])
             ]:
-                # NaN, None, "" 전부 비어있는 것으로 처리
-                if pd.isna(person) or str(person).strip() == "":
+                # NaN, None, 빈문자열 모두 None 처리
+                if person is None or pd.isna(person) or str(person).strip() == "":
                     parts.append((name, None))
                 else:
                     parts.append((name, str(person).strip()))
@@ -88,5 +92,4 @@ if st.button("곡 상태 보기"):
         styled_df = result_df.style.applymap(color_missing, subset=["부족 인원"])
 
         st.dataframe(styled_df, use_container_width=True)
-
 
