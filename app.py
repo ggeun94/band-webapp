@@ -33,26 +33,29 @@ if st.button("가능한 곡 보기"):
             ]
             total = sum(1 for _, p in parts if p is not None)
             present = sum(1 for _, p in parts if p is None or p in present_members)
-            missing = [name for name, p in parts if p is not None and p not in present_members]
+            # 담당자 이름도 같이 표시
+            missing = [f"{name}({p})" for name, p in parts if p is not None and p not in present_members]
 
             if present == total:
                 priorities[1].append((row["곡명"], missing))
-            elif present == total -1:
+            elif present == total - 1:
                 priorities[2].append((row["곡명"], missing))
-            elif present == total -2:
+            elif present == total - 2:
                 priorities[3].append((row["곡명"], missing))
 
         found = False
-        for level in [1,2,3]:
+        for level in [1, 2, 3]:
             if priorities[level]:
-                if level ==1:
+                if level == 1:
                     st.subheader("✅ 1순위 (모두 참석)")
-                elif level==2:
+                elif level == 2:
                     st.subheader("⚠️ 2순위 (1명 결원)")
-                elif level==3:
+                elif level == 3:
                     st.subheader("⚠️ 3순위 (2명 결원)")
                 for song, missing in priorities[level]:
                     st.write(f"- {song} (부족한 파트: {', '.join(missing) if missing else '없음'})")
-                found=True
+                found = True
         if not found:
             st.error("참석 인원으로 연주 가능한 곡이 없습니다.")
+
+
