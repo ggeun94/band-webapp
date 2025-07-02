@@ -23,14 +23,20 @@ if st.button("곡 상태 보기"):
     else:
         result_rows = []
         for _, row in df.iterrows():
-            parts = [
+            parts = []
+            for name, person in [
                 ("드럼", row["드럼"]),
                 ("베이스", row["베이스"]),
                 ("기타1", row["기타1"]),
                 ("기타2", row["기타2"]),
                 ("건반", row["건반"]),
                 ("보컬", row["보컬"])
-            ]
+            ]:
+                # NaN, None, "" 전부 비어있는 것으로 처리
+                if pd.isna(person) or str(person).strip() == "":
+                    parts.append((name, None))
+                else:
+                    parts.append((name, str(person).strip()))
 
             total_parts = sum(1 for _, p in parts if p is not None)
             present_parts = sum(1 for _, p in parts if p is None or p in present_members)
@@ -66,7 +72,7 @@ if st.button("곡 상태 보기"):
         # 표시용 열 만들기
         result_df["참석 인원"] = result_df["참석 인원"].astype(str) + " / " + result_df["총 파트 수"].astype(str)
 
-        # "부족 인원" 색칠 함수
+        # 부족 인원 색칠 함수
         def color_missing(val):
             if isinstance(val, int):
                 if val == 0:
