@@ -5,13 +5,12 @@ import pandas as pd
 @st.cache_data
 def load_data():
     df = pd.read_excel("band_songs.xlsx")
-    return df.where(pd.notnull(df), None)
+    return df
 
 df = load_data()
 
-st.title("🎸 밴드 합주 곡 세션별 확인 (디버그 모드)")
+st.title("🎸 밴드 합주 곡 세션별 확인 (정확 처리 버전)")
 
-# 디버그: 엑셀 데이터 그대로 보기
 if st.checkbox("엑셀 원본 데이터 보기"):
     st.write(df)
 
@@ -36,14 +35,15 @@ if st.button("곡 상태 보기"):
                 ("건반", row["건반"]),
                 ("보컬", row["보컬"])
             ]:
-                # NaN, None, 빈문자열 모두 None 처리
-                if person is None or pd.isna(person) or str(person).strip() == "":
+                # NaN, None, 빈문자열은 진짜로 파트 없음으로 처리
+                if pd.isna(person) or str(person).strip() == "":
                     parts.append((name, None))
                 else:
                     parts.append((name, str(person).strip()))
 
+            # 총 파트: 담당자가 있는 파트만 계산
             total_parts = sum(1 for _, p in parts if p is not None)
-            present_parts = sum(1 for _, p in parts if p is None or p in present_members)
+            present_parts = sum(1 for _, p in parts if p is not None and p in present_members)
             missing_parts = total_parts - present_parts
 
             part_status = {}
@@ -80,16 +80,14 @@ if st.button("곡 상태 보기"):
         def color_missing(val):
             if isinstance(val, int):
                 if val == 0:
-                    color = "background-color: #d4edda"  # 연두
+                    color = "background-color: #d4edda"
                 elif val == 1:
-                    color = "background-color: #fff3cd"  # 연노랑
+                    color = "background-color: #fff3cd"
                 else:
-                    color = "background-color: #f8d7da"  # 연빨강
+                    color = "background-color: #f8d7da"
                 return color
             return ""
 
-        # 스타일 적용
         styled_df = result_df.style.applymap(color_missing, subset=["부족 인원"])
 
         st.dataframe(styled_df, use_container_width=True)
-
