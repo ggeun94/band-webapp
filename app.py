@@ -44,16 +44,14 @@ with col1:
         if new_member.strip():
             all_members.append(new_member.strip())
             save_members(all_members)
-            st.success(f"{new_member.strip()} 추가됨!")
-            st.experimental_rerun()
+            st.success(f"{new_member.strip()} 추가됨! (새로고침하면 목록에 표시됩니다)")
 
 with col2:
     remove_members = st.multiselect("삭제할 멤버 선택", options=all_members)
     if st.button("삭제"):
         all_members = [m for m in all_members if m not in remove_members]
         save_members(all_members)
-        st.success("선택한 멤버 삭제됨!")
-        st.experimental_rerun()
+        st.success("선택한 멤버 삭제됨! (새로고침하면 목록에 반영됩니다)")
 
 # ====== 참석자 선택 ======
 st.subheader("✅ 오늘 참석자 선택")
@@ -128,4 +126,5 @@ if st.button("곡 상태 보기"):
         styled_df = result_df.style.applymap(color_missing, subset=["부족 인원"])
 
         st.dataframe(styled_df, use_container_width=True)
+
 
