@@ -33,6 +33,10 @@ all_members = read_members()
 
 st.title("🎸 밴드 합주 곡 세션 관리")
 
+# ====== 엑셀 원본 보기 ======
+if st.checkbox("엑셀 원본 데이터 보기"):
+    st.dataframe(df, use_container_width=True)
+
 # ====== 이름 관리 UI ======
 st.subheader("👥 멤버 관리")
 
@@ -126,5 +130,4 @@ if st.button("곡 상태 보기"):
         styled_df = result_df.style.applymap(color_missing, subset=["부족 인원"])
 
         st.dataframe(styled_df, use_container_width=True)
-
 
